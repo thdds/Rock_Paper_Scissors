@@ -10,27 +10,33 @@ import SwiftUI
 struct ContentView: View {
     @State private var showingScore = false
     @State private var tries = 0
+    private var winOrLose: String {
+        return ["lose", "win"].shuffled()[0]
+    }
     @State private var scoreTitle = ""
     @State private var rockPaperScissors = ["✂️", "🪨", "📄"].shuffled()
-    private var correctAnswer: String {
-            return ""
-    }
     @State private var userScore = 0
     var body: some View {
         VStack {
-            Text("\(rockPaperScissors[correctAnswer])")
+            Spacer()
+            Text("\(rockPaperScissors[0])")
                 .font(.largeTitle)
+            Spacer()
+            Text(winOrLose)
+            Spacer()
             HStack {
                 ForEach(0..<3) {number in
                     Button {
                         buttonTapped(number)
                     } label: {
                         Text(rockPaperScissors[number]).font(.largeTitle)
-                    }
+                    }.padding()
                     
                 }
             }
-            Text(correctAnswer)
+            Spacer()
+            Spacer()
+            Text(correctAnswer())
         .padding()
         }.alert(scoreTitle, isPresented: $showingScore) {
             Button("Restart Game?", action: resetScore)
@@ -40,8 +46,9 @@ struct ContentView: View {
         
            
     }
+    
     func buttonTapped(_ number: Int) {
-        if number == correctAnswer {
+        if rockPaperScissors[number] == correctAnswer() {
             userScore += 1
         } else {
             userScore -= 1
@@ -49,7 +56,7 @@ struct ContentView: View {
         tries += 1
         printResult()
         rockPaperScissors.shuffle()
-        correctAnswer = Int.random(in: 0...2)
+        //correctAnswer = rockPaperScissors[Int.random(in: 0...2)]
     }
     func printResult() {
         if tries == 10 {
@@ -61,12 +68,15 @@ struct ContentView: View {
         tries = 0
         userScore = 0
     }
-    func isCorrectAnswer(_ number: Int) -> Bool {
-        return false
-    }
-    func correctAnswer(_ number: Int) -> String {
+    func correctAnswer() -> String {
+        if rockPaperScissors[0] == "📄" {
+            return "✂️"
+        } else if rockPaperScissors[0] == "🪨" {
+            return "📄"
+        } else { // scissors
+            return "🪨"
+        }
         
-        return ""
     }
 }
 
